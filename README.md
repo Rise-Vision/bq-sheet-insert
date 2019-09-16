@@ -91,3 +91,7 @@ Note that each date row in the BQ result set corresponds to a cell value update 
 ###### Continuity expectation
 
 Note that the program expects daily runs. If a date column for previous days is missing, errors may result.
+
+### See also
+
+###### [Google Sheets data connector for BigQuery](https://cloud.google.com/blog/products/g-suite/connecting-bigquery-and-google-sheets-to-help-with-hefty-data-analysis)
