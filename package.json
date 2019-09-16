@@ -1,0 +1,14 @@
+{
+  "name": "bq-sheet-insert",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bq-sheet-insert.js",
+  "scripts": {
+    "deploy": "gcloud --project=$PROJECT_NAME functions deploy bq-sheets-insert --region=$REGION --runtime=nodejs8 --trigger-http --memory=256MB --source=./ --timeout=20s --entry-point=run"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/bigquery": "^3.0.0",
+    "googleapis": "^42.0.0"
+  }
+}
