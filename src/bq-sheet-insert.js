@@ -1,7 +1,8 @@
 process.env.NODE_ENV="production";
+process.env.CONFIG_FILE = process.env.CONFIG_FILE || "components-widgets-config.js";
 Error.stackTraceLimit = 20;
 
-const {dateCells, queries} = require(`${__dirname}/../config.js`);
+const {dateCells, queries} = require(`${__dirname}/../${process.env.CONFIG_FILE}`);
 const assert = require("assert");
 const spreadsheet = require("./spreadsheet.js");
 

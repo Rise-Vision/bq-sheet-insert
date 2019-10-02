@@ -1,7 +1,7 @@
 const {google} = require("googleapis");
 const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
 
-const {spreadsheetId, sheetId, sheetName, range, dateCells} = require(`${__dirname}/../config.js`);
+const {spreadsheetId, sheetId, sheetName, range, dateCells} = require(`${__dirname}/../${process.env.CONFIG_FILE}`);
 
 const sheetsAPICache = {};
 const sheetDataCache = {rows: [], rowLookups: {}};
