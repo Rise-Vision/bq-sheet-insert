@@ -17,8 +17,15 @@ module.exports = {
     return getSheetData()
     .then(sheetRows=>{
       rowLabels.forEach((label, idx)=>{
-        const sheetRow = getSheetRow(sheetRows, label);
-        const sheetCol = getSheetCol(sheetRows[0], dateStr);
+        let sheetRow, sheetCol;
+
+        try {
+          sheetRow = getSheetRow(sheetRows, label);
+          sheetCol = getSheetCol(sheetRows[0], dateStr);
+        } catch(e) {
+          console.error(e);
+          return;
+        }
 
         updateRangeValueData(sheetRow, sheetCol, values[idx])
         console.log(`Set [${label}, ${dateStr}] = ${values[idx]} at [${sheetRow}, ${sheetCol}]`);
