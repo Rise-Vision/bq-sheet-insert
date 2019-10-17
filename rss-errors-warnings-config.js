@@ -20,6 +20,18 @@ module.exports = {
       dateField: "date"
     },
     {
+      name: "request error",
+      query: "SELECT * FROM `client-side-events.Display_Events.ComponentErrorsAndWarnings` WHERE rollout_stage='stable' AND component='rise-data-rss' AND event='request error' limit 7",
+      useLegacySql: false,
+      valueFields: [
+        "count"
+      ],
+      rowLabels: [
+        "request error",
+      ],
+      dateField: "date"
+    },
+    {
       name: "cache put failed",
       query: "SELECT * FROM `client-side-events.Display_Events.ComponentErrorsAndWarnings` WHERE rollout_stage='stable' AND component='rise-data-rss' AND event='cache put failed' limit 7",
       useLegacySql: false,
