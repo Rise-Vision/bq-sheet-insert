@@ -56,6 +56,18 @@ module.exports = {
         "rise-text"
       ],
       dateField: "date"
+    },
+    {
+      name: "Rise Cache",
+      query: "SELECT * FROM [client-side-events:Rise_Cache_V2.cache_reliability] limit 3",
+      useLegacySql: true,
+      valueFields: [
+        "Reliability"
+      ],
+      rowLabels: [
+        "RC Reliability"
+      ],
+      dateField: "total_date"
     }
   ]
 };
