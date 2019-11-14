@@ -11,7 +11,7 @@ const rangeValueData = [];
 const CODE_POINT_A = "A".codePointAt(0);
 
 module.exports = {
-  updateSheet(rowLabels, dateStr, values) {
+  updateSheet(rowLabels, dateStr, values, name) {
     if (typeof dateStr === "object") {dateStr = dateStr.value;}
 
     return getSheetData()
@@ -23,6 +23,7 @@ module.exports = {
           sheetRow = getSheetRow(sheetRows, label);
           sheetCol = getSheetCol(sheetRows[0], dateStr);
         } catch(e) {
+          e.message = `${e.message}: ${name}`;
           console.error(e);
           return;
         }
