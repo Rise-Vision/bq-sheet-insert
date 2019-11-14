@@ -30,7 +30,7 @@ function setSpreadsheetValuesFromBQ() {
       const values = valueFields.map(fieldName=>bqRow[fieldName]);
 
       if (!bqRow[dateField]) {throw Error(`Missing field ${dateField} in result ${JSON.stringify(bqRow)}`)}
-      return spreadsheet.updateSheet(rowLabels, bqRow[dateField], values);
+      return spreadsheet.updateSheet(rowLabels, bqRow[dateField], values, name);
     })));
   }));
 }
