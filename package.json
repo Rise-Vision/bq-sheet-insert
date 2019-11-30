@@ -4,8 +4,10 @@
   "description": "",
   "main": "src/bq-sheet-insert.js",
   "scripts": {
-    "prepare": "npm run prepare-zip-for-manual-gcf-upload",
-    "prepare-zip-for-manual-gcf-upload": "test -e creds.json && zip -r deploy.zip . -x node_modules\\* -x .git\\*"
+    "prepare": "npm run confirm-creds && npm run confirm-config && npm run prepare-zip-for-gcf-upload",
+    "confirm-creds": "test -e creds.json",
+    "confirm-config": "test -e config.js",
+    "prepare-zip-for-gcf-upload": "zip -r deploy.zip . -x node_modules\\* -x .\\*"
   },
   "license": "ISC",
   "dependencies": {
