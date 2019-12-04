@@ -3,6 +3,8 @@ const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
 
 const {spreadsheetId, sheetId, sheetName, range, dateCells} = require(`${__dirname}/../${process.env.CONFIG_FILE}`);
 
+const monthText = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 const sheetsAPICache = {};
 const sheetDataCache = {rows: [], rowLookups: {}};
 
@@ -11,6 +13,10 @@ const rangeValueData = [];
 const CODE_POINT_A = "A".codePointAt(0);
 
 module.exports = {
+  clearSheetDataCache() {
+    sheetDataCache.rows = [];
+    sheetDataCache.rowLookups = {};
+  },
   updateSheet(rowLabels, dateStr, values, name) {
     if (typeof dateStr === "object") {dateStr = dateStr.value;}
 
@@ -47,44 +53,66 @@ module.exports = {
     .then(()=>console.log(`Committed ${rangeValueData.length} updates into sheet ${sheetName}`))
   },
   insertColumn() {
-    return getSheetsApi()
-    .then(sheets=>{
-      return sheets.spreadsheets.batchUpdate({
-      spreadsheetId,
-      resource: {
-        requests: [
-          {
-            insertDimension: {
-              range: {
-                sheetId,
-                dimension: "COLUMNS",
-                startIndex: dateCells[0].codePointAt(0) - CODE_POINT_A,
-                endIndex: dateCells[0].codePointAt(0) - CODE_POINT_A + 1 // endIndex bound is exclusive
-              },
-              inheritFromBefore: false,
-            }
-          }
-        ]
-      }
-    })})
-    .then(pasteFormulasIntoNewColumn);
-  },
-  updateNewColumnDate() {
-    const dateComponents = (new Date()).toUTCString().split(" ");
-    const newCellText = `${dateComponents[2]}-${dateComponents[1]}`;
+    return isNewColumnNeeded()
+    .then(needed=>{
+      if (!needed) {return;}
 
-    return getSheetsApi()
-    .then(sheets=>sheets.spreadsheets.values.batchUpdate({
-      spreadsheetId,
-      resource: {
-        valueInputOption: "USER_ENTERED",
-        data: dateCells.map(dateCell=>({
-          range: `${sheetName}!${dateCell}`,
-          values: [[newCellText]]
-        }))
-      }
-    }));
+      return getSheetsApi()
+      .then(sheets=>{
+        return sheets.spreadsheets.batchUpdate({
+        spreadsheetId,
+        resource: {
+          requests: [
+            {
+              insertDimension: {
+                range: {
+                  sheetId,
+                  dimension: "COLUMNS",
+                  startIndex: dateCells[0].codePointAt(0) - CODE_POINT_A,
+                  endIndex: dateCells[0].codePointAt(0) - CODE_POINT_A + 1 // endIndex bound is exclusive
+                },
+                inheritFromBefore: false,
+              }
+            }
+          ]
+        }
+      })})
+      .then(pasteFormulasIntoNewColumn)
+      .then(updateNewColumnDate)
+      .then(()=>module.exports.clearSheetDataCache());
+    })
   }
+}
+
+function isNewColumnNeeded() {
+  return getSheetData()
+  .then(sheetRows=>{
+    const dateColIdx = dateCells[0].codePointAt(0) - CODE_POINT_A;
+    const dateRowIdx = dateCells[0][1] - 1;
+
+    console.log(`New column needed? Checking sheet value [${dateRowIdx},${dateColIdx}]${sheetRows[dateRowIdx][dateColIdx]} for ${todaysDateString()}`);
+
+    return sheetRows[dateRowIdx][dateColIdx] !== todaysDateString();
+  });
+}
+
+function todaysDateString() {
+  const date = new Date();
+  return `${date.getUTCDate()}-${monthText[date.getUTCMonth()]}`;
+}
+
+function updateNewColumnDate() {
+  return getSheetsApi()
+  .then(sheets=>sheets.spreadsheets.values.batchUpdate({
+     spreadsheetId,
+     resource: {
+       valueInputOption: "USER_ENTERED",
+       data: dateCells.map(dateCell=>({
+         range: `${sheetName}!${dateCell}`,
+         values: [[todaysDateString()]]
+       }))
+     }
+  }));
 }
 
 function updateRangeValueData(sheetRow, sheetCol, val) {
@@ -97,9 +125,8 @@ function updateRangeValueData(sheetRow, sheetCol, val) {
 function getSheetData() {
   if (sheetDataCache.rows.length) {return Promise.resolve(sheetDataCache.rows);}
 
-  return google.auth.getClient({scopes})
-  .then(auth=>{
-    const sheets = google.sheets({version: "v4", auth});
+  return getSheetsApi()
+  .then(sheets=>{
     return sheets.spreadsheets.values.get({spreadsheetId, range: `${sheetName}!${range}`});
   })
   .then(sheetDataResp=>sheetDataCache.rows = sheetDataResp.data.values);
