@@ -1,22 +1,50 @@
 version: 2
 jobs:
-  build:
-    docker:
-      - image: circleci/node:latest
-
-    working_directory: ~/repo
+  "deploy_delivery_gcf":
+    docker: &DOCKERIMAGE
+      - image: jenkinsrise/cci-latest-node-with-gcloud:0.0.1
 
     steps:
       - checkout
+      - run: git checkout origin/configuration/delivery -- config.js
+      - run: &GCLOUDAUTH
+          name: GCLOUD Authentication
+          command: |
+            echo $GCLOUD_AUTH_BASE64| base64 --decode > ./creds.json
+            gcloud auth activate-service-account --key-file=./creds.json
+            gcloud config set project $DEPLOY_PROJECT_ID
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
+      - run:
+          name: Deploy GCF
+          command: |
+            npm run prepare
+            gsutil cp deploy.zip gs://client-side-events-gcf-staging-bucket/${CIRCLE_JOB}${CIRCLE_BUILD_NUM}.zip
+            gcloud functions deploy populate-delivery-kpis --entry-point=runPubSub --memory=256MB --runtime=nodejs10 --timeout=180s --source=gs://client-side-events-gcf-staging-bucket/${CIRCLE_JOB}${CIRCLE_BUILD_NUM}.zip
 
-      - run: npm install
+  "something_else":
+    docker: *DOCKERIMAGE
+    steps:
+      - checkout
+      - run: git checkout origin/configuration/some-other -- config.js
+      - run: *GCLOUDAUTH
+      - run:
+          name: Deploy GCF
+          command: |
+            npm run prepare
+            gsutil cp deploy.zip gs://client-side-events-gcf-staging-bucket/${CIRCLE_JOB}${CIRCLE_BUILD_NUM}.zip
+            gcloud functions deploy some_other-gcf --entry-point=runPubSub --memory=256MB --runtime=nodejs10 --timeout=180s --source=gs://client-side-events-gcf-staging-bucket/${CIRCLE_JOB}${CIRCLE_BUILD_NUM}.zip
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - "deploy_delivery_gcf":
+          filters:
+            branches:
+              only:
+                - master
+      - "something_else":
+          filters:
+            branches:
+              only:
+                - notusedyet

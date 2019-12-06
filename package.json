@@ -2,9 +2,12 @@
   "name": "bq-sheet-insert",
   "version": "1.0.0",
   "description": "",
-  "main": "bq-sheet-insert.js",
+  "main": "src/bq-sheet-insert.js",
   "scripts": {
-    "deploy": "gcloud --project=$PROJECT_NAME functions deploy bq-sheets-insert --region=$REGION --runtime=nodejs8 --trigger-http --memory=256MB --source=./ --timeout=20s --entry-point=run"
+    "prepare": "npm run confirm-creds && npm run confirm-config && npm run prepare-zip-for-gcf-upload",
+    "confirm-creds": "test -e creds.json",
+    "confirm-config": "test -e config.js",
+    "prepare-zip-for-gcf-upload": "zip -r deploy.zip . -x node_modules\\* -x .\\*"
   },
   "license": "ISC",
   "dependencies": {
