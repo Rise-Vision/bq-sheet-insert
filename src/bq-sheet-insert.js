@@ -10,17 +10,34 @@ const {BigQuery} = require("@google-cloud/bigquery");
 const bq = new BigQuery({projectId: process.env.GCLOUD_PROJECT});
 
 module.exports = {
-  run(req, resp) {
-    validateConfig();
-
-    return spreadsheet.insertColumn()
-    .then(spreadsheet.updateNewColumnDate)
-    .then(setSpreadsheetValuesFromBQ)
-    .then(spreadsheet.commit)
-    .catch(err=>console.error(err))
+  runHttp(req, resp) {
+    return run()
+    .catch(e=>console.error(e))
     .then(()=>resp.status(200).send());
+  },
+  runPubSub(pubSubEvent, context) {
+    const eventAge = Date.now() - Date.parse(context.timestamp);
+    const eventMaxAge = 180000;
+
+    if (eventAge > eventMaxAge) {
+      console.log(`Dropping event ${context.eventId} with age ${eventAge} ms.`);
+      return;
+    }
+
+    return run();
   }
 };
+
+if (process.env.CLI_RUN) {run();}
+
+function run() {
+  validateConfig();
+  spreadsheet.clearSheetDataCache();
+
+  return spreadsheet.insertColumn()
+  .then(setSpreadsheetValuesFromBQ)
+  .then(spreadsheet.commit);
+}
 
 function setSpreadsheetValuesFromBQ() {
   return Promise.all(queries.map(({name, query, useLegacySql, rowLabels, dateField, valueFields})=>{
@@ -35,8 +52,6 @@ function setSpreadsheetValuesFromBQ() {
     })));
   }));
 }
-
-if (process.env.CLI_RUN) {module.exports.run({}, {status() {return {send() {}}}})}
 
 function validateConfig() {
   assert(Array.isArray(dateCells), "Date cells should contain an array");
