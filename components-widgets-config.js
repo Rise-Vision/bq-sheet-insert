@@ -41,7 +41,8 @@ module.exports = {
         "counter_r",
         "configuration_r",
         "pud_r",
-        "text_r"
+        "text_r",
+        "timeAndDate_r"
       ],
       rowLabels: [
         "rise-data-financial",
@@ -53,7 +54,8 @@ module.exports = {
         "rise-data-counter",
         "RisePlayerConfiguration",
         "rise-play-until-done",
-        "rise-text"
+        "rise-text",
+        "rise-time-date"
       ],
       dateField: "date"
     },

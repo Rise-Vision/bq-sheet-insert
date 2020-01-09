@@ -12,7 +12,7 @@ GOOGLE_APPLICATION_CREDENTIALS=$1
 
 # CONFIG_FILES=(financial-errors-warnings-config.js rss-errors-warnings-config.js weather-errors-warnings-config.js)
 # CONFIG_FILES=(image-errors-warnings-config.js slides-errors-warnings-config.js video-errors-warnings-config.js)
-# CONFIG_FILES=(counter-errors-warnings-config.js riseplayerconfiguration-errors-warnings-config.js)
+# CONFIG_FILES=(counter-errors-warnings-config.js time-date-errors-warnings-config.js riseplayerconfiguration-errors-warnings-config.js)
 
 for i in "${CONFIG_FILES[@]}"; do
   CLI_RUN=true GCLOUD_PROJECT=client-side-events GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS CONFIG_FILE=$i node src/bq-sheet-insert
