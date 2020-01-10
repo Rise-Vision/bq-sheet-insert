@@ -6,6 +6,14 @@ module.exports = {
   dateCells: ["D1", "D7", "D12", "D15"],
   queries: [
     {
+      name: "BQ Analysis",
+      query: "SELECT * FROM `rise-core-log.billingData.BQAnalysisCostsPerDay` LIMIT 5",
+      useLegacySql: false,
+      valueFields: ["total_cost"],
+      rowLabels: ["Query Costs"],
+      dateField: "date"
+    },
+    {
       name: "Rise Cache",
       query: "SELECT * FROM [client-side-events:Rise_Cache_V2.cache_reliability] limit 5",
       useLegacySql: true,
