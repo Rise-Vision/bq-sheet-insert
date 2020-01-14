@@ -5,7 +5,7 @@ module.exports = {
   sheetId: 0,
   sheetName: "Reliability",
   range: `A1:L50`,
-  dateCells: ["B1", "B4", "B13", "B26"],
+  dateCells: ["B1", "B4", "B13", "B27"],
   queries: [
     {
       name: "Core Widgets",
