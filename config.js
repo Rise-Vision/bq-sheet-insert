@@ -3,7 +3,7 @@ module.exports = {
   sheetId: 1665212950,
   sheetName: "KPI's",
   range: `A1:L50`,
-  dateCells: ["D1", "D7", "D12", "D15"],
+  dateCells: ["D1", "D7", "D12", "D16"],
   queries: [
     {
       name: "BQ Analysis",
