@@ -170,6 +170,28 @@ module.exports = {
       dateField: "date"
     },
     {
+      name: "Streaming Insert Costs",
+      query: `SELECT
+        DATE(usage_start_time) date,
+        sum(cost) cost
+        FROM
+          \`rise-core-log.billingData.gcp_billing_export_v1_00FE29_4FDD82_EF884E\`
+        WHERE
+          DATE(_PARTITIONTIME) >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY)
+          AND sku.description = "Streaming Insert"
+        GROUP BY
+          date
+        ORDER BY date desc`,
+      useLegacySql: false,
+      valueFields: [
+        "cost",
+      ],
+      rowLabels: [
+        "Streaming Insert Cost"
+      ],
+      dateField: "date"
+    },
+    {
       name: "KPI Costs",
       query: `SELECT
         d.date date,
