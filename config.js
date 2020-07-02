@@ -136,6 +136,40 @@ module.exports = {
       dateField: "date"
     },
     {
+      name: "Image Costs",
+      query: `WITH
+        uCaseImageExtensions AS (
+          SELECT
+            *
+          FROM
+            UNNEST(['JPG','JPEG','PNG','GIF','TTF','BMP','SVG','TIF','TIFF','WEBP']) AS extension
+        )
+
+        SELECT
+          extract(DATE from (timestamp_micros(time_micros))) date,
+          (sum(sc_bytes))*0.12/1000000000 dollar_cost
+        FROM
+          \`avid-life-623.RiseStorageLogs_v2.UsageLogs*\`
+        WHERE
+          _table_suffix BETWEEN FORMAT_DATE("%Y%m%d", DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY))
+          AND FORMAT_DATE("%Y%m%d", DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY))
+
+          AND SPLIT(UPPER(cs_object), ".")[ORDINAL(ARRAY_LENGTH(SPLIT(UPPER(cs_object), ".")))] IN
+          (SELECT extension FROM uCaseImageExtensions)
+        GROUP BY
+          date
+        ORDER BY
+          date desc`,
+      useLegacySql: false,
+      valueFields: [
+        "dollar_cost",
+      ],
+      rowLabels: [
+        "Image Bandwidth Cost"
+      ],
+      dateField: "date"
+    },
+    {
       name: "KPI Costs",
       query: `SELECT
         d.date date,
