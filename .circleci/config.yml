@@ -43,6 +43,7 @@ workflows:
             branches:
               only:
                 - master
+                - configuration/delivery
       - "something_else":
           filters:
             branches:
