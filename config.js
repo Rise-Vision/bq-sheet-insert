@@ -3,7 +3,7 @@ module.exports = {
   sheetId: 1665212950,
   sheetName: "KPI's",
   range: `A1:L50`,
-  dateCells: ["D1", "D7", "D12", "D16"],
+  dateCells: ["D1", "D6", "D9", "D14", "D20"],
   queries: [
     {
       name: "BQ Analysis",
@@ -225,6 +225,18 @@ module.exports = {
       rowLabels: [
         "Storage Bandwidth",
         "Cost for Day"
+      ],
+      dateField: "date"
+    },
+    {
+      name: "Shared Schedules Uptime",
+      query: "SELECT date, ((totalEndpoints - endpointsWithErrors) / totalEndpoints) uptime FROM `client-side-events.Shared_Schedule_Events.SharedScheduleUsageAndErrorCount` ORDER BY date DESC LIMIT 5",
+      useLegacySql: false,
+      valueFields: [
+        "uptime"
+      ],
+      rowLabels: [
+        "Uptime SS"
       ],
       dateField: "date"
     }
