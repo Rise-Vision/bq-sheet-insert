@@ -126,6 +126,18 @@ module.exports = {
         "component not found for id in attribute data",
       ],
       dateField: "date"
+    },
+    {
+      name: "component bindOnConfigured overflow triggered",
+      query: "SELECT * FROM `client-side-events.Display_Events.ComponentErrorsAndWarnings` WHERE rollout_stage='stable' AND component='RisePlayerConfiguration' AND event='component bindOnConfigured overflow triggered' limit 7",
+      useLegacySql: false,
+      valueFields: [
+        "count"
+      ],
+      rowLabels: [
+        "component bindOnConfigured overflow triggered",
+      ],
+      dateField: "date"
     }
   ]
 };
