@@ -5,7 +5,7 @@ module.exports = {
   sheetId: 0,
   sheetName: "Reliability",
   range: `A1:L50`,
-  dateCells: ["B1", "B4", "B13", "B27"],
+  dateCells: ["B1", "B4", "B13"],
   queries: [
     {
       name: "Core Widgets",
@@ -58,18 +58,6 @@ module.exports = {
         "rise-time-date"
       ],
       dateField: "date"
-    },
-    {
-      name: "Rise Cache",
-      query: "SELECT * FROM [client-side-events:Rise_Cache_V2.cache_reliability] limit 3",
-      useLegacySql: true,
-      valueFields: [
-        "Reliability"
-      ],
-      rowLabels: [
-        "RC Reliability"
-      ],
-      dateField: "total_date"
     }
   ]
 };
