@@ -239,6 +239,18 @@ module.exports = {
         "Uptime SS"
       ],
       dateField: "date"
+    },
+    {
+      name: "Core Exports",
+      query: "SELECT * FROM `rvaserver2.appengine_logs_v2.BulkExportSuccessRatio`",
+      useLegacySql: false,
+      valueFields: [
+        "pct"
+      ],
+      rowLabels: [
+        "Core Bulk Export Success Ratio"
+      ],
+      dateField: "date"
     }
   ]
 }
